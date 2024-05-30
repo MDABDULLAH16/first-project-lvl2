@@ -11,19 +11,19 @@ const userNameSchema = new Schema<UserName>({
   firstName: {
     type: String,
     required: [true, 'First name is required.'],
-    maxLength: [20, 'First name cannot exceed 20 characters.'],
-    trim: true,
-    validate: {
-      validator: function (value: string) {
-        const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1);
-        return firstNameStr === value;
-        // if (value !== firstNameStr) {
-        //   return false;
-        // }
-        // return true;
-      },
-      message: '{VALUE} is not Capitalize,make sure it Capitalization format',
-    },
+    // maxLength: [20, 'First name cannot exceed 20 characters.'],
+    // // trim: true,
+    // validate: {
+    //   validator: function (value: string) {
+    //     const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1);
+    //     return firstNameStr === value;
+    //     // if (value !== firstNameStr) {
+    //     //   return false;
+    //     // }
+    //     // return true;
+    //   },
+    //   message: '{VALUE} is not Capitalize,make sure it Capitalization format',
+    // },
   },
   middleName: {
     type: String,
@@ -33,12 +33,12 @@ const userNameSchema = new Schema<UserName>({
   lastName: {
     type: String,
     required: [true, 'Last name is required.'],
-    maxLength: [20, 'Last name cannot exceed 20 characters.'],
-    trim: true,
-    validate: {
-      validator: (value: string) => validator.isAlpha(value),
-      message: '{VALUE} is not supported',
-    },
+    // maxLength: [20, 'Last name cannot exceed 20 characters.'],
+    // trim: true,
+    // validate: {
+    //   validator: (value: string) => validator.isAlpha(value),
+    //   message: '{VALUE} is not supported',
+    // },
   },
 });
 
