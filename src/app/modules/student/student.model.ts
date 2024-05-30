@@ -1,13 +1,15 @@
 import { Schema, model } from 'mongoose';
 import {
-  Guardian,
-  UserName,
-  LocalGuardian,
-  Student,
+  TGuardian,
+  TUserName,
+  TLocalGuardian,
+  TStudent,
+  StudentModel,
+  // StudentMethods,
 } from './student.interface';
 import validator from 'validator';
 // Schema
-const userNameSchema = new Schema<UserName>({
+const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
     required: [true, 'First name is required.'],
@@ -42,7 +44,7 @@ const userNameSchema = new Schema<UserName>({
   },
 });
 
-const guardianSchema = new Schema<Guardian>({
+const guardianSchema = new Schema<TGuardian>({
   fatherName: {
     type: String,
     required: [true, "Father's name is required."],
@@ -77,7 +79,7 @@ const guardianSchema = new Schema<Guardian>({
   },
 });
 
-const localGuardianSchema = new Schema<LocalGuardian>({
+const localGuardianSchema = new Schema<TLocalGuardian>({
   name: {
     type: String,
     required: [true, "Local guardian's name is required."],
@@ -101,7 +103,8 @@ const localGuardianSchema = new Schema<LocalGuardian>({
   },
 });
 
-export const studentSchema = new Schema<Student>({
+// if you use custom instance method ,you should use StudentMethods
+export const studentSchema = new Schema<TStudent, StudentModel>({
   id: {
     type: String,
     required: [true, 'Student ID is required.'],
@@ -189,4 +192,16 @@ export const studentSchema = new Schema<Student>({
   },
 });
 
-export const StudentModel = model<Student>('Student', studentSchema);
+//this is for statics methods
+studentSchema.statics.isUserExists = async function (id: string) {
+  const isExistUser = await Student.findOne({ id });
+  return isExistUser;
+};
+
+//existing user
+// studentSchema.methods.isUserExists = async function (id: string) {
+//   const isExistUser = await Student.findOne({ id });
+//   return isExistUser;
+// };
+//this is default data model , hare, StudentModel for checking user existing its import from interface
+export const Student = model<TStudent, StudentModel>('Student', studentSchema);
