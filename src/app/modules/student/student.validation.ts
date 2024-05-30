@@ -36,6 +36,7 @@ const localGuardianSchema = z.object({
 
 const studentZodValidationSchema = z.object({
   id: z.string().min(1, 'Student ID is required.'),
+  password: z.string().max(20, 'Password max 20 is required.'),
   name: userNameSchema,
   profileImg: z.string().min(1, 'Profile image URL is required.'),
   dateOfBirth: z.string(),

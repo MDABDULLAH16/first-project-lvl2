@@ -8,6 +8,9 @@ import {
   // StudentMethods,
 } from './student.interface';
 import validator from 'validator';
+
+import bcrypt from 'bcrypt';
+import config from '../../config';
 // Schema
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -111,6 +114,12 @@ export const studentSchema = new Schema<TStudent, StudentModel>({
     unique: true,
     trim: true,
   },
+  password: {
+    type: String,
+    required: [true, 'Password is required.'],
+    unique: true,
+    trim: true,
+  },
   name: {
     type: userNameSchema,
     required: [true, 'Name is required.'],
@@ -190,6 +199,21 @@ export const studentSchema = new Schema<TStudent, StudentModel>({
     default: 'active',
     trim: true,
   },
+});
+
+//before post data, password bcrypt by hashing
+studentSchema.pre('save', async function (next) {
+  console.log(this);
+  const user = this;
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_round),
+  );
+  next();
+});
+
+studentSchema.post('save', function () {
+  console.log(this, 'after save data');
 });
 
 //this is for statics methods
