@@ -1,6 +1,7 @@
 import { error } from 'console';
 import { TStudent } from './student.interface';
 import { Student } from './student.model';
+import { match } from 'assert';
 
 //create student
 const createStudentIntoDB = async (studentData: TStudent) => {
@@ -29,7 +30,15 @@ const getAllStudentFromDb = async () => {
 
 //get single item from db
 const getSingleStudentFromDB = async (id: string) => {
-  const result = await Student.findOne({ id });
+  // const result = await Student.findOne({ id });
+
+  const result = Student.aggregate([{ $match: { id: id } }]);
+
+  return result;
+};
+// deleteditem
+const deletedStudentFromDB = async (id: string) => {
+  const result = await Student.updateOne({ id }, { isDeleted: true });
   return result;
 };
 
@@ -37,4 +46,5 @@ export const StudentService = {
   createStudentIntoDB,
   getAllStudentFromDb,
   getSingleStudentFromDB,
+  deletedStudentFromDB,
 };

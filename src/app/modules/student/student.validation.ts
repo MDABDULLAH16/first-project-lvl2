@@ -55,6 +55,7 @@ const studentZodValidationSchema = z.object({
   permanentAddress: z.string().min(1, 'Permanent address is required.'),
   presentAddress: z.string().min(1, 'Present address is required.'),
   isActive: z.enum(['active', 'blocked']).default('active'),
+  isDeleted: z.boolean(),
 });
 
 export default studentZodValidationSchema;

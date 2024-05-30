@@ -199,9 +199,13 @@ export const studentSchema = new Schema<TStudent, StudentModel>({
     default: 'active',
     trim: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-//before post data, password bcrypt by hashing
+// middleware before post data, password bcrypt by hashing
 studentSchema.pre('save', async function (next) {
   console.log(this);
   const user = this;
@@ -212,8 +216,27 @@ studentSchema.pre('save', async function (next) {
   next();
 });
 
-studentSchema.post('save', function () {
-  console.log(this, 'after save data');
+studentSchema.post('save', async function (doc, next) {
+  doc.password = '';
+  next();
+});
+
+//query middleware
+
+studentSchema.pre('find', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+studentSchema.pre('findOne', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+//pre findOne does not break aggregate, so we should break it manually
+studentSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+
+  next();
 });
 
 //this is for statics methods

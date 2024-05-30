@@ -4,9 +4,9 @@ import { StudentService } from './student.service';
 import studentZodValidationSchema from './student.validation';
 
 const createStudent = async (req: Request, res: Response) => {
+  const { student: studentData } = req.body;
   try {
     //get request from any where
-    const { student: studentData } = req.body;
 
     //validation with JOI
     // const { error, value } = studentValidationSchema.validate(studentData);
@@ -44,27 +44,59 @@ const getAllStudents = async (req: Request, res: Response) => {
     const result = await StudentService.getAllStudentFromDb();
     res.status(200).json({
       success: true,
-      message: 'Student create successfully',
+      message: 'Student fetched successfully',
       data: result,
     });
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Something is wrong',
+      error: error,
+    });
   }
 };
 
 //get 1 item controller
 const getSingleStudent = async (req: Request, res: Response) => {
   const studentId = req.params.studentId;
-  const result = await StudentService.getSingleStudentFromDB(studentId);
-  res.status(200).json({
-    success: true,
-    message: 'find the student successfully',
-    data: result,
-  });
+  try {
+    const result = await StudentService.getSingleStudentFromDB(studentId);
+    res.status(200).json({
+      success: true,
+      message: 'find the student successfully',
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Something is wrong',
+      error: error,
+    });
+  }
+};
+
+//delete item with updatedOne
+const deletedStudent = async (req: Request, res: Response) => {
+  const studentId = req.params.studentId;
+  try {
+    const result = await StudentService.deletedStudentFromDB(studentId);
+    res.status(200).json({
+      success: true,
+      message: 'deleted student successfully',
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Something is wrong',
+      error: error,
+    });
+  }
 };
 
 export const StudentController = {
   createStudent,
   getAllStudents,
   getSingleStudent,
+  deletedStudent,
 };
