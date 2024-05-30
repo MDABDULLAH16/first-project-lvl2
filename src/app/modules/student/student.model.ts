@@ -107,103 +107,110 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 });
 
 // if you use custom instance method ,you should use StudentMethods
-export const studentSchema = new Schema<TStudent, StudentModel>({
-  id: {
-    type: String,
-    required: [true, 'Student ID is required.'],
-    unique: true,
-    trim: true,
-  },
-  password: {
-    type: String,
-    required: [true, 'Password is required.'],
-    unique: true,
-    trim: true,
-  },
-  name: {
-    type: userNameSchema,
-    required: [true, 'Name is required.'],
-  },
-  profileImg: {
-    type: String,
-    required: [true, 'Profile image URL is required.'],
-    trim: true,
-  },
-  dateOfBirth: {
-    type: String,
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: [true, 'Email is required.'],
-    unique: true,
-    trim: true,
-    validate: {
-      validator: (value: string) => validator.isEmail(value),
-      message: '{VALUE} is not supported',
+export const studentSchema = new Schema<TStudent, StudentModel>(
+  {
+    id: {
+      type: String,
+      required: [true, 'Student ID is required.'],
+      unique: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: [true, 'Password is required.'],
+      unique: true,
+      trim: true,
+    },
+    name: {
+      type: userNameSchema,
+      required: [true, 'Name is required.'],
+    },
+    profileImg: {
+      type: String,
+      required: [true, 'Profile image URL is required.'],
+      trim: true,
+    },
+    dateOfBirth: {
+      type: String,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: [true, 'Email is required.'],
+      unique: true,
+      trim: true,
+      validate: {
+        validator: (value: string) => validator.isEmail(value),
+        message: '{VALUE} is not supported',
+      },
+    },
+    contactNo: {
+      type: String,
+      required: [true, 'Contact number is required.'],
+      trim: true,
+    },
+    emergencyContact: {
+      type: String,
+      required: [true, 'Emergency contact number is required.'],
+      trim: true,
+    },
+    gender: {
+      type: String,
+      enum: {
+        values: ['male', 'female', 'other'],
+        message:
+          '{VALUE} is not supported. Gender should be either male, female, or other.',
+      },
+      required: [true, 'Gender is required.'],
+      trim: true,
+    },
+    bloodGroup: {
+      type: String,
+      enum: {
+        values: ['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-'],
+        message:
+          '{VALUE} is not supported. Valid blood groups are A+, A-, AB+, AB-, B+, B-, O+, O-.',
+      },
+      trim: true,
+    },
+    guardian: {
+      type: guardianSchema,
+      required: [true, 'Guardian information is required.'],
+    },
+    localGuardian: {
+      type: localGuardianSchema,
+      required: [true, 'Local guardian information is required.'],
+    },
+    permanentAddress: {
+      type: String,
+      required: [true, 'Permanent address is required.'],
+      trim: true,
+    },
+    presentAddress: {
+      type: String,
+      required: [true, 'Present address is required.'],
+    },
+    isActive: {
+      type: String,
+      enum: {
+        values: ['active', 'blocked'],
+        message:
+          '{VALUE} is not supported. Status should be either active or blocked.',
+      },
+      default: 'active',
+      trim: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
-  contactNo: {
-    type: String,
-    required: [true, 'Contact number is required.'],
-    trim: true,
-  },
-  emergencyContact: {
-    type: String,
-    required: [true, 'Emergency contact number is required.'],
-    trim: true,
-  },
-  gender: {
-    type: String,
-    enum: {
-      values: ['male', 'female', 'other'],
-      message:
-        '{VALUE} is not supported. Gender should be either male, female, or other.',
+  {
+    toJSON: {
+      virtuals: true,
     },
-    required: [true, 'Gender is required.'],
-    trim: true,
   },
-  bloodGroup: {
-    type: String,
-    enum: {
-      values: ['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-'],
-      message:
-        '{VALUE} is not supported. Valid blood groups are A+, A-, AB+, AB-, B+, B-, O+, O-.',
-    },
-    trim: true,
-  },
-  guardian: {
-    type: guardianSchema,
-    required: [true, 'Guardian information is required.'],
-  },
-  localGuardian: {
-    type: localGuardianSchema,
-    required: [true, 'Local guardian information is required.'],
-  },
-  permanentAddress: {
-    type: String,
-    required: [true, 'Permanent address is required.'],
-    trim: true,
-  },
-  presentAddress: {
-    type: String,
-    required: [true, 'Present address is required.'],
-  },
-  isActive: {
-    type: String,
-    enum: {
-      values: ['active', 'blocked'],
-      message:
-        '{VALUE} is not supported. Status should be either active or blocked.',
-    },
-    default: 'active',
-    trim: true,
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-});
+);
 
 // middleware before post data, password bcrypt by hashing
 studentSchema.pre('save', async function (next) {
@@ -237,6 +244,11 @@ studentSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
 
   next();
+});
+
+//virtual
+studentSchema.virtual('fullName').get(function () {
+  return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
 });
 
 //this is for statics methods
