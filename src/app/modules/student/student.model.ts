@@ -9,8 +9,6 @@ import {
 } from './student.interface';
 import validator from 'validator';
 
-import bcrypt from 'bcrypt';
-import config from '../../config';
 // Schema
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -115,11 +113,12 @@ export const studentSchema = new Schema<TStudent, StudentModel>(
       unique: true,
       trim: true,
     },
-    password: {
-      type: String,
-      required: [true, 'Password is required.'],
+
+    user: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'User Id is required.'],
       unique: true,
-      trim: true,
+      ref: 'User',
     },
     name: {
       type: userNameSchema,
@@ -190,16 +189,16 @@ export const studentSchema = new Schema<TStudent, StudentModel>(
       type: String,
       required: [true, 'Present address is required.'],
     },
-    isActive: {
-      type: String,
-      enum: {
-        values: ['active', 'blocked'],
-        message:
-          '{VALUE} is not supported. Status should be either active or blocked.',
-      },
-      default: 'active',
-      trim: true,
-    },
+    // isActive: {
+    //   type: String,
+    //   enum: {
+    //     values: ['active', 'blocked'],
+    //     message:
+    //       '{VALUE} is not supported. Status should be either active or blocked.',
+    //   },
+    //   default: 'active',
+    //   trim: true,
+    // },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -211,22 +210,6 @@ export const studentSchema = new Schema<TStudent, StudentModel>(
     },
   },
 );
-
-// middleware before post data, password bcrypt by hashing
-studentSchema.pre('save', async function (next) {
-  console.log(this);
-  const user = this;
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_round),
-  );
-  next();
-});
-
-studentSchema.post('save', async function (doc, next) {
-  doc.password = '';
-  next();
-});
 
 //query middleware
 

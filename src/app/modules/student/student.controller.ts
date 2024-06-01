@@ -3,41 +3,41 @@ import { StudentService } from './student.service';
 // import { studentValidationSchema } from './student.Joi.Validation';
 import studentZodValidationSchema from './student.validation';
 
-const createStudent = async (req: Request, res: Response) => {
-  const { student: studentData } = req.body;
-  try {
-    //get request from any where
+// const createStudent = async (req: Request, res: Response) => {
+//   const { student: studentData } = req.body;
+//   try {
+//     //get request from any where
 
-    //validation with JOI
-    // const { error, value } = studentValidationSchema.validate(studentData);
-    // if (error) {
-    //   res.status(500).json({
-    //     success: false,
-    //     message: 'Something is wrong',
-    //     error: error,
-    //   });
-    // }
+//     //validation with JOI
+//     // const { error, value } = studentValidationSchema.validate(studentData);
+//     // if (error) {
+//     //   res.status(500).json({
+//     //     success: false,
+//     //     message: 'Something is wrong',
+//     //     error: error,
+//     //   });
+//     // }
 
-    //validation with Zod
-    const ZodValidation = studentZodValidationSchema.parse(studentData);
+//     //validation with Zod
+//     const ZodValidation = studentZodValidationSchema.parse(studentData);
 
-    //get services data from createIntoDb & services
-    const result = await StudentService.createStudentIntoDB(ZodValidation);
-    //will be response here
-    res.status(200).json({
-      success: true,
-      message: 'Student create successfully',
-      data: result,
-    });
-  } catch (error: any) {
-    // console.log(error);
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Something is wrong',
-      error: error,
-    });
-  }
-};
+//     //get services data from createIntoDb & services
+//     const result = await StudentService.createStudentIntoDB(ZodValidation);
+//     //will be response here
+//     res.status(200).json({
+//       success: true,
+//       message: 'Student create successfully',
+//       data: result,
+//     });
+//   } catch (error: any) {
+//     // console.log(error);
+//     res.status(500).json({
+//       success: false,
+//       message: error.message || 'Something is wrong',
+//       error: error,
+//     });
+//   }
+// };
 
 const getAllStudents = async (req: Request, res: Response) => {
   try {
@@ -95,7 +95,7 @@ const deletedStudent = async (req: Request, res: Response) => {
 };
 
 export const StudentController = {
-  createStudent,
+  // createStudent,
   getAllStudents,
   getSingleStudent,
   deletedStudent,

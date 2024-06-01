@@ -3,23 +3,23 @@ import { TStudent } from './student.interface';
 import { Student } from './student.model';
 import { match } from 'assert';
 
-//create student
-const createStudentIntoDB = async (studentData: TStudent) => {
-  //this is for statics methods
-  if (await Student.isUserExists(studentData.id)) {
-    throw new Error('user Already exists');
-  }
-  const result = await Student.create(studentData); //build in static method
+// //create student
+// const createStudentIntoDB = async (studentData: TStudent) => {
+//   //this is for statics methods
+//   if (await Student.isUserExists(studentData.id)) {
+//     throw new Error('user Already exists');
+//   }
+//   const result = await Student.create(studentData); //build in static method
 
-  // const student = new Student(studentData); //create an instance
+//   // const student = new Student(studentData); //create an instance
 
-  //user existing handler
-  // if (await student.isUserExists(studentData.id)) {
-  //   throw new Error('user Already exists');
-  // }
-  // const result = await student.save(); //build in instance method
-  return result;
-};
+//   //user existing handler
+//   // if (await student.isUserExists(studentData.id)) {
+//   //   throw new Error('user Already exists');
+//   // }
+//   // const result = await student.save(); //build in instance method
+//   return result;
+// };
 
 //get student
 
@@ -43,7 +43,7 @@ const deletedStudentFromDB = async (id: string) => {
 };
 
 export const StudentService = {
-  createStudentIntoDB,
+  // createStudentIntoDB,
   getAllStudentFromDb,
   getSingleStudentFromDB,
   deletedStudentFromDB,
