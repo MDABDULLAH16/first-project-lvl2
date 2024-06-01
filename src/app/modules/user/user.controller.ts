@@ -1,8 +1,12 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { userServices } from './user.service';
 import { userValidation } from './user.validation';
 
-const createStudent = async (req: Request, res: Response) => {
+const createStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { password, student: studentData } = req.body;
   try {
     //get request from any where
@@ -32,13 +36,14 @@ const createStudent = async (req: Request, res: Response) => {
       message: 'Student create successfully',
       data: result,
     });
-  } catch (error: any) {
+  } catch (error) {
     // console.log(error);
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Something is wrong',
-      error: error,
-    });
+    // res.status(500).json({
+    //   success: false,
+    //   message: error.message || 'Something is wrong',
+    //   error: error,
+    // });
+    next(error);
   }
 };
 
