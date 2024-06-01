@@ -1,7 +1,9 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Application, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import { StudentRoutes } from './app/modules/student/student.router';
 import { UserRoutes } from './app/modules/user/user.router';
+import { error } from 'console';
+import globalErrorHandling from './app/middlewares/globalErrorHandling';
 
 const app: Application = express();
 app.use(express.json());
@@ -18,5 +20,7 @@ const getAController = (req: Request, res: Response) => {
   res.send(a);
 };
 app.get('/', getAController);
+
+app.use(globalErrorHandling);
 
 export default app;
