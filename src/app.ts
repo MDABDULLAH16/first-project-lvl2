@@ -4,6 +4,7 @@ import { StudentRoutes } from './app/modules/student/student.router';
 import { UserRoutes } from './app/modules/user/user.router';
 import { error } from 'console';
 import globalErrorHandling from './app/middlewares/globalErrorHandling';
+import notFound from './app/middlewares/notFound';
 
 const app: Application = express();
 app.use(express.json());
@@ -22,5 +23,6 @@ const getAController = (req: Request, res: Response) => {
 app.get('/', getAController);
 
 app.use(globalErrorHandling);
+app.use(notFound);
 
 export default app;
