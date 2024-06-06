@@ -33,7 +33,21 @@ const createAcademicSemesterZodSchema = z.object({
     endMonth: MonthEnum,
   }),
 });
+const updateAcademicSemesterZodSchema = z.object({
+  body: z.object({
+    name: SemesterNameEnum.optional(),
+    code: SemesterCodeEnum.optional(),
+    year: z
+      .string({
+        required_error: 'Year is required.',
+      })
+      .optional(),
+    startMonth: MonthEnum.optional(),
+    endMonth: MonthEnum.optional(),
+  }),
+});
 
 export const AcademicSemesterValidation = {
   createAcademicSemesterZodSchema,
+  updateAcademicSemesterZodSchema,
 };

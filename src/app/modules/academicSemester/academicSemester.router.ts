@@ -11,6 +11,16 @@ router.post(
   validatedRequest(AcademicSemesterValidation.createAcademicSemesterZodSchema),
   academicSemesterController.createAcademicSemester,
 );
+router.get('/', academicSemesterController.getAllSemester);
+
+// get single semester
+router.get('/:semesterId', academicSemesterController.getOneSemester);
+
+router.patch(
+  '/:semesterId',
+  validatedRequest(AcademicSemesterValidation.updateAcademicSemesterZodSchema),
+  academicSemesterController.updateSemester,
+);
 
 // //find one student
 // router.get('/:studentId', StudentController.getSingleStudent);

@@ -14,19 +14,6 @@ const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
     required: [true, 'First name is required.'],
-    // maxLength: [20, 'First name cannot exceed 20 characters.'],
-    // // trim: true,
-    // validate: {
-    //   validator: function (value: string) {
-    //     const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1);
-    //     return firstNameStr === value;
-    //     // if (value !== firstNameStr) {
-    //     //   return false;
-    //     // }
-    //     // return true;
-    //   },
-    //   message: '{VALUE} is not Capitalize,make sure it Capitalization format',
-    // },
   },
   middleName: {
     type: String,
@@ -36,12 +23,6 @@ const userNameSchema = new Schema<TUserName>({
   lastName: {
     type: String,
     required: [true, 'Last name is required.'],
-    // maxLength: [20, 'Last name cannot exceed 20 characters.'],
-    // trim: true,
-    // validate: {
-    //   validator: (value: string) => validator.isAlpha(value),
-    //   message: '{VALUE} is not supported',
-    // },
   },
 });
 
@@ -189,16 +170,12 @@ export const studentSchema = new Schema<TStudent, StudentModel>(
       type: String,
       required: [true, 'Present address is required.'],
     },
-    // isActive: {
-    //   type: String,
-    //   enum: {
-    //     values: ['active', 'blocked'],
-    //     message:
-    //       '{VALUE} is not supported. Status should be either active or blocked.',
-    //   },
-    //   default: 'active',
-    //   trim: true,
-    // },
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicSemester',
+      required: [true, 'Admission Semester is required.'],
+    },
+
     isDeleted: {
       type: Boolean,
       default: false,
