@@ -1,4 +1,6 @@
+import httpStatus from 'http-status';
 import config from '../../config';
+import AppError from '../../errors/AppError';
 // import { TAcademicSemester } from '../academicSemester/academicSemester.interface';
 import { AcademicSemester } from '../academicSemester/academicSemester.model';
 import { TStudent } from '../student/student.interface';
@@ -6,6 +8,7 @@ import { Student } from '../student/student.model';
 import { TUser } from './user.interface';
 import { User } from './user.model';
 import { generateStudentId } from './user.utilities';
+import mongoose from 'mongoose';
 
 //create student
 const createStudentIntoDB = async (password: string, payLoad: TStudent) => {
@@ -34,33 +37,40 @@ const createStudentIntoDB = async (password: string, payLoad: TStudent) => {
     payLoad.admissionSemester,
   );
 
-  // Check if admissionSemester is null
-  if (!admissionSemester) {
-    throw new Error('Admission semester not found');
-  }
-  //set manually id
-  userData.id = await generateStudentId(admissionSemester);
+  const session = await mongoose.startSession();
 
-  //create a user
-  const newUser = await User.create(userData); //build in static method
+  try {
+    session.startTransaction();
+    // Check if admissionSemester is null
+    if (!admissionSemester) {
+      throw new Error('Admission semester not found');
+    }
+    //set manually id
+    userData.id = await generateStudentId(admissionSemester);
 
-  //create a student
-  if (Object.keys(newUser).length) {
-    payLoad.id = newUser.id; //unique or embed id
-    payLoad.user = newUser._id; // reference id
+    //create a user
+    const newUser = await User.create([userData], { session }); //build in static method
 
-    const newStudent = await Student.create(payLoad);
+    //create a student
+    if (!newUser.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'failed to create user');
+    }
+    payLoad.id = newUser[0].id; //unique or embed id
+    payLoad.user = newUser[0]._id; // reference id
+
+    const newStudent = await Student.create([payLoad], { session });
+    if (!newStudent.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'failed to create student');
+    }
+    await session.commitTransaction();
+    await session.endSession();
     return newStudent;
+
+    // return newUser;
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
   }
-
-  // const student = new Student(studentData); //create an instance
-
-  //user existing handler
-  // if (await student.isUserExists(studentData.id)) {
-  //   throw new Error('user Already exists');
-  // }
-  // const result = await student.save(); //build in instance method
-  return newUser;
 };
 
 export const userServices = {
