@@ -54,4 +54,14 @@ userSchema.post('save', async function (doc, next) {
   next();
 });
 
+userSchema.pre('save', async function (next) {
+  const isUserExists = await User.findOne({
+    id: this.id,
+  });
+  if (isUserExists) {
+    throw new Error('user already exist');
+  }
+  next();
+});
+
 export const User = model<TUser>('User', userSchema);

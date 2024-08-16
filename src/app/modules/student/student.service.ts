@@ -1,7 +1,5 @@
-import { error } from 'console';
-import { TStudent } from './student.interface';
 import { Student } from './student.model';
-import { match } from 'assert';
+// import { match } from 'assert';
 
 // //create student
 // const createStudentIntoDB = async (studentData: TStudent) => {
@@ -24,15 +22,32 @@ import { match } from 'assert';
 //get student
 
 const getAllStudentFromDb = async () => {
-  const result = await Student.find();
+  const result = await Student.find()
+    .populate('admissionSemester')
+    .populate('user')
+    .populate({
+      path: 'academicDepartment',
+      populate: {
+        path: 'academicFaculty',
+      },
+    });
+
   return result;
 };
 
 //get single item from db
 const getSingleStudentFromDB = async (id: string) => {
-  // const result = await Student.findOne({ id });
+  const result = await Student.findOne({ id })
+    .populate('admissionSemester')
+    .populate('user')
+    .populate({
+      path: 'academicDepartment',
+      populate: {
+        path: 'academicFaculty',
+      },
+    });
 
-  const result = Student.aggregate([{ $match: { id: id } }]);
+  // const result = Student.aggregate([{ $match: { id: id } }]);
 
   return result;
 };

@@ -88,12 +88,12 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 // if you use custom instance method ,you should use StudentMethods
 export const studentSchema = new Schema<TStudent, StudentModel>(
   {
-    id: {
-      type: String,
-      required: [true, 'Student ID is required.'],
-      unique: true,
-      trim: true,
-    },
+    // id: {
+    //   type: String,
+    //   required: [true, 'Student ID is required.'],
+    //   unique: true,
+    //   trim: true,
+    // },
 
     user: {
       type: Schema.Types.ObjectId,
@@ -173,6 +173,12 @@ export const studentSchema = new Schema<TStudent, StudentModel>(
     admissionSemester: {
       type: Schema.Types.ObjectId,
       ref: 'AcademicSemester',
+      required: true,
+    },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicDepartment',
+      required: true,
     },
     isDeleted: {
       type: Boolean,
