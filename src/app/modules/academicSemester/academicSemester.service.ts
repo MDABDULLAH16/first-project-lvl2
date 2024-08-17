@@ -1,51 +1,52 @@
-import { academicSemesterMapper } from './academicSemester.constants';
+import { academicSemesterNameCodeMapper } from './academicSemester.constant';
 import { TAcademicSemester } from './academicSemester.interface';
 import { AcademicSemester } from './academicSemester.model';
-
-const createAcademicSemesterIntoDB = async (payLoad: TAcademicSemester) => {
-  if (academicSemesterMapper[payLoad.name] !== payLoad.code) {
-    throw new Error('Semester code is invalided');
+const createAcademicSemesterIntoDB = async (payload: TAcademicSemester) => {
+  
+  
+  
+  // semester name --> semester code
+  // academicSemesterNameCodeMapper['Fall']
+  if (academicSemesterNameCodeMapper[payload.name] !==  payload.code) {
+    throw new Error('Invalid Semester Code');
   }
 
-  const result = await AcademicSemester.create(payLoad);
+
+  const result = await AcademicSemester.create(payload);
   return result;
 };
 
-//get all semesters
-
-const getAllSemesterFromDB = async () => {
+const getAllAcademicSemestersFromDB = async () => {
   const result = await AcademicSemester.find();
   return result;
 };
-//get all semesters
 
-const getOneSemesterFromDB = async (_id: string) => {
-  const result = await AcademicSemester.findById({ _id });
+const getSingleAcademicSemesterFromDB = async (id: string) => {
+  const result = await AcademicSemester.findById(id);
   return result;
 };
 
-const updateSemester = async (
+const updateAcademicSemesterIntoDB = async (
   id: string,
-  payLoad: Partial<TAcademicSemester>,
+  payload: Partial<TAcademicSemester>,
 ) => {
   if (
-    payLoad.name &&
-    payLoad.code &&
-    academicSemesterMapper[payLoad.name] !== payLoad.code
+    payload.name &&
+    payload.code &&
+    academicSemesterNameCodeMapper[payload.name] !== payload.code
   ) {
     throw new Error('Invalid Semester Code');
   }
 
-  const result = await AcademicSemester.findByIdAndUpdate(
-    { _id: id },
-    payLoad,
-    { new: true },
-  );
+  const result = await AcademicSemester.findOneAndUpdate({ _id: id }, payload, {
+    new: true,
+  });
   return result;
 };
-export const academicSemesterService = {
+
+export const AcademicSemesterServices = {
   createAcademicSemesterIntoDB,
-  getAllSemesterFromDB,
-  getOneSemesterFromDB,
-  updateSemester,
+  getAllAcademicSemestersFromDB,
+  getSingleAcademicSemesterFromDB,
+  updateAcademicSemesterIntoDB,
 };

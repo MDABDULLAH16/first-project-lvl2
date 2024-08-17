@@ -1,53 +1,31 @@
 import { z } from 'zod';
+import {
+  AcademicSemesterCode,
+  AcademicSemesterName,
+  Months,
+} from './academicSemester.constant';
 
-// Define the month type
-const MonthEnum = z.enum([
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-]);
-
-// Define the academic semester name enum
-const SemesterNameEnum = z.enum(['Autumn', 'Summer', 'Fall']);
-// Define the academic semester code enum
-const SemesterCodeEnum = z.enum(['01', '02', '03']);
-
-// Define the academic semester schema
-const createAcademicSemesterZodSchema = z.object({
+const createAcdemicSemesterValidationSchema = z.object({
   body: z.object({
-    name: SemesterNameEnum,
-    code: SemesterCodeEnum,
-    year: z.string({
-      required_error: 'Year is required.',
-    }),
-    startMonth: MonthEnum,
-    endMonth: MonthEnum,
-  }),
-});
-const updateAcademicSemesterZodSchema = z.object({
-  body: z.object({
-    name: SemesterNameEnum.optional(),
-    code: SemesterCodeEnum.optional(),
-    year: z
-      .string({
-        required_error: 'Year is required.',
-      })
-      .optional(),
-    startMonth: MonthEnum.optional(),
-    endMonth: MonthEnum.optional(),
+    name: z.enum([...AcademicSemesterName] as [string, ...string[]]),
+    year: z.string(),
+    code: z.enum([...AcademicSemesterCode] as [string, ...string[]]),
+    startMonth: z.enum([...Months] as [string, ...string[]]),
+    endMonth: z.enum([...Months] as [string, ...string[]]),
   }),
 });
 
-export const AcademicSemesterValidation = {
-  createAcademicSemesterZodSchema,
-  updateAcademicSemesterZodSchema,
+const updateAcademicSemesterValidationSchema = z.object({
+  body: z.object({
+    name: z.enum([...AcademicSemesterName] as [string, ...string[]]).optional(),
+    year: z.string().optional(),
+    code: z.enum([...AcademicSemesterCode] as [string, ...string[]]).optional(),
+    startMonth: z.enum([...Months] as [string, ...string[]]).optional(),
+    endMonth: z.enum([...Months] as [string, ...string[]]).optional(),
+  }),
+});
+
+export const AcademicSemesterValidations = {
+  createAcdemicSemesterValidationSchema,
+  updateAcademicSemesterValidationSchema,
 };

@@ -1,58 +1,63 @@
 import httpStatus from 'http-status';
-import catchAsync from '../../utilities/catchAsync';
-import sendResponse from '../../utilities/sendResponse';
-import { academicFacultyServices } from './academicFaculty.service';
+import catchAsync from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
+import { AcademicFacultyServices } from './academicFaculty.service';
 
 const createAcademicFaculty = catchAsync(async (req, res) => {
-  const result = await academicFacultyServices.createAcademicFacultyIntoDB(
+  const result = await AcademicFacultyServices.createAcademicFacultyIntoDB(
     req.body,
   );
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Academic Faculty created Successfully',
+    message: 'Academic faculty is created succesfully',
     data: result,
   });
 });
 
-const getAcademicFaculty = catchAsync(async (req, res) => {
-  const result = await academicFacultyServices.getAllAcademicFacultyFromDB();
+const getAllAcademicFaculties = catchAsync(async (req, res) => {
+  const result = await AcademicFacultyServices.getAllAcademicFacultiesFromDB();
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Academic Faculty retrieved Successfully',
+    message: 'Academic faculties are retrieved successfully',
     data: result,
   });
 });
+
 const getSingleAcademicFaculty = catchAsync(async (req, res) => {
   const { facultyId } = req.params;
   const result =
-    await academicFacultyServices.getSingleAcademicFacultyFromDB(facultyId);
+    await AcademicFacultyServices.getSingleAcademicFacultyFromDB(facultyId);
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Single Academic Faculty retrieved Successfully',
+    message: 'Academic faculty is retrieved succesfully',
     data: result,
   });
 });
 
 const updateAcademicFaculty = catchAsync(async (req, res) => {
   const { facultyId } = req.params;
-  const result = await academicFacultyServices.updateAcademicFacultyOnDB(
+  const result = await AcademicFacultyServices.updateAcademicFacultyIntoDB(
     facultyId,
     req.body,
   );
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Update Academic Faculty Successfully',
+    message: 'Academic faculty is updated succesfully',
     data: result,
   });
 });
 
-export const academicFacultyController = {
+export const AcademicFacultyControllers = {
   createAcademicFaculty,
-  getAcademicFaculty,
+  getAllAcademicFaculties,
   getSingleAcademicFaculty,
   updateAcademicFaculty,
 };

@@ -9,7 +9,9 @@ const academicFacultySchema = new Schema<TAcademicFaculty>(
       unique: true,
     },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+  },
 );
 
 export const AcademicFaculty = model<TAcademicFaculty>(

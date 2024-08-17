@@ -1,14 +1,13 @@
-import { Schema, model } from 'mongoose';
-import { TUser } from './user.interface';
-import { z } from 'zod';
 import bcrypt from 'bcrypt';
+import { Schema, model } from 'mongoose';
 import config from '../../config';
-
+import { TUser } from './user.interface';
 const userSchema = new Schema<TUser>(
   {
     id: {
       type: String,
       required: true,
+      unique: true,
     },
     password: {
       type: String,
@@ -16,16 +15,16 @@ const userSchema = new Schema<TUser>(
     },
     needsPasswordChange: {
       type: Boolean,
-      required: true,
-      default: false,
+      default: true,
     },
     role: {
       type: String,
-      enum: ['admin', 'student', 'faculty'],
+      enum: ['student', 'faculty', 'admin'],
     },
     status: {
       type: String,
       enum: ['in-progress', 'blocked'],
+      default: 'in-progress',
     },
     isDeleted: {
       type: Boolean,
@@ -37,29 +36,20 @@ const userSchema = new Schema<TUser>(
   },
 );
 
-// middleware before post data, password bcrypt by hashing
 userSchema.pre('save', async function (next) {
-  // console.log(this);
-  const user = this;
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this; // doc
+  // hashing password and save into DB
   user.password = await bcrypt.hash(
     user.password,
-    Number(config.bcrypt_salt_round),
+    Number(config.bcrypt_salt_rounds),
   );
   next();
 });
 
-userSchema.post('save', async function (doc, next) {
+// set '' after saving password
+userSchema.post('save', function (doc, next) {
   doc.password = '';
-  next();
-});
-
-userSchema.pre('save', async function (next) {
-  const isUserExists = await User.findOne({
-    id: this.id,
-  });
-  if (isUserExists) {
-    throw new Error('user already exist');
-  }
   next();
 });
 

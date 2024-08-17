@@ -1,78 +1,66 @@
 import httpStatus from 'http-status';
+import mongoose from 'mongoose';
 import config from '../../config';
 import AppError from '../../errors/AppError';
-// import { TAcademicSemester } from '../academicSemester/academicSemester.interface';
-import { AcademicSemester } from '../academicSemester/academicSemester.model';
 import { TStudent } from '../student/student.interface';
 import { Student } from '../student/student.model';
+import { AcademicSemester } from './../academicSemester/academicSemester.model';
 import { TUser } from './user.interface';
 import { User } from './user.model';
-import { generateStudentId } from './user.utilities';
-import mongoose from 'mongoose';
+import { generateStudentId } from './user.utils';
 
-//create student
-const createStudentIntoDB = async (password: string, payLoad: TStudent) => {
-  //this is for statics methods
-  //   if (await Student.isUserExists(studentData.id)) {
-  //     throw new Error('user Already exists');
-  //   }
-
-  //create a user object for set role and password
+const createStudentIntoDB = async (password: string, payload: TStudent) => {
+  // create a user object
   const userData: Partial<TUser> = {};
 
-  //if user password not given, use default password
+  //if password is not given , use deafult password
   userData.password = password || (config.default_password as string);
-  //   if (!password) {
-  //     password = config.default_password as string;
-  //   } else {
-  //     user.password = password;
-  //   }
 
   //set student role
   userData.role = 'student';
 
-  //find academic semester info with semester id
-
+  // find academic semester info
   const admissionSemester = await AcademicSemester.findById(
-    payLoad.admissionSemester,
+    payload.admissionSemester,
   );
 
   const session = await mongoose.startSession();
 
   try {
     session.startTransaction();
-    // Check if admissionSemester is null
-    if (!admissionSemester) {
-      throw new Error('Admission semester not found');
-    }
-    //set manually id
+    //set  generated id
     userData.id = await generateStudentId(admissionSemester);
 
-    //create a user
-    const newUser = await User.create([userData], { session }); //build in static method
+    // create a user (transaction-1)
+    const newUser = await User.create([userData], { session }); // array
 
     //create a student
     if (!newUser.length) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'failed to create user');
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user');
     }
-    payLoad.id = newUser[0].id; //unique or embed id
-    payLoad.user = newUser[0]._id; // reference id
+    // set id , _id as user
+    payload.id = newUser[0].id;
+    payload.user = newUser[0]._id; //reference _id
 
-    const newStudent = await Student.create([payLoad], { session });
+    // create a student (transaction-2)
+
+    const newStudent = await Student.create([payload], { session });
+
     if (!newStudent.length) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'failed to create student');
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student');
     }
+
     await session.commitTransaction();
     await session.endSession();
-    return newStudent;
 
-    // return newUser;
-  } catch (error) {
+    return newStudent;
+  } catch (err) {
     await session.abortTransaction();
     await session.endSession();
+    throw new Error('Failed to create student');
   }
 };
 
-export const userServices = {
+export const UserServices = {
   createStudentIntoDB,
 };
