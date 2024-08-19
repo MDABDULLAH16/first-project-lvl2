@@ -1,6 +1,5 @@
 import { Schema, model } from 'mongoose';
 import {
-  StudentModel,
   TGuardian,
   TLocalGuardian,
   TStudent,
@@ -12,7 +11,6 @@ const userNameSchema = new Schema<TUserName>({
     type: String,
     required: [true, 'First Name is required'],
     trim: true,
-    maxlength: [20, 'Name can not be more than 20 characters'],
   },
   middleName: {
     type: String,
@@ -74,7 +72,7 @@ const localGuradianSchema = new Schema<TLocalGuardian>({
   },
 });
 
-const studentSchema = new Schema<TStudent, StudentModel>(
+const studentSchema = new Schema<TStudent>(
   {
     id: {
       type: String,
@@ -110,7 +108,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: String,
       required: [true, 'Emergency contact number is required'],
     },
-    bloogGroup: {
+    bloodGroup: {
       type: String,
       enum: {
         values: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
@@ -181,9 +179,4 @@ studentSchema.statics.isUserExists = async function (id: string) {
   return existingUser;
 };
 
-export const Student = model<TStudent, StudentModel>('Student', studentSchema);
-
-
-
-
-
+export const Student = model<TStudent>('Student', studentSchema);
