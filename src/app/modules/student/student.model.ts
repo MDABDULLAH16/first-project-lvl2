@@ -174,9 +174,17 @@ studentSchema.pre('aggregate', function (next) {
 });
 
 //creating a custom static method
-studentSchema.statics.isUserExists = async function (id: string) {
-  const existingUser = await Student.findOne({ id });
-  return existingUser;
-};
+// studentSchema.statics.isUserExists = async function (id: string) {
+//   const existingUser = await Student.findOne({ id });
+//   return existingUser;
+// };
 
+// studentSchema.pre('save', async function (next) {
+//   const existingUser = await Student.findOne({ email: this.email });
+
+//   if (!existingUser) {
+//     throw new Error('this students already exist');
+//   }
+//   next();
+// });
 export const Student = model<TStudent>('Student', studentSchema);
